@@ -5,32 +5,42 @@ Unity-ScriptGenerator
 Usage
 -------
 1) Select "Tools/Script Generator" in the menu.
+<br>
 <img src = "./Demo/menu.png">
+<br>
+<br>
+<br>
 
 2) Enter texts containing custom formatters (e.g. ```Hoge{0}``` )
 <br>
 <img height = 200 src = "./Demo/ex1.png">
 <br>
-
-3) Click the button.
-<img src = "./Demo/button.png">
+<br>
 <br>
 
+3) Click the button.
+<br>
+<img width = 370 src = "./Demo/button.png">
+<br>
+
+<br>
 <br>
 That's it!
 
-![](./Demo/demo.gif)
+<img src ="./Demo/demo.gif">
 
 
 Examples
 ---
 
 Create **HogeView.cs**, **HogeModel.cs** and **HogePresenter.cs**.
+<br>
 <img width = 320 src = "./Demo/ex1.png">
 
 <br>
 
 Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
+<br>
 <img width = 320 src = "./Demo/ex2.png">
 
 License
