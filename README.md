@@ -1,19 +1,20 @@
 Unity-ScriptGenerator
 ============
-**ScriptGenerator** is a tool to create Unity C# script files automatically with custom formatters.
+**ScriptGenerator** is a tool to create script files automatically in Unity.
 
 Usage
 -------
-1) Select "Tools/Script Generator" in Menu.
+1) Select "Tools/Script Generator" in the menu.
+<img src = "./Demo/menu.png">
 
-2) Enter texts including custom formatters (e.g. ```Hoge{0}``` )
+2) Enter texts containing custom formatters (e.g. ```Hoge{0}``` )
 <br>
 <img height = 200 src = "./Demo/ex1.png">
+<br>
 
-<br>
-3) Click button
-<br>
+3) Click the button.
 <img src = "./Demo/button.png">
+<br>
 
 <br>
 That's it!
@@ -31,8 +32,6 @@ Create **HogeView.cs**, **HogeModel.cs** and **HogePresenter.cs**.
 
 Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
 <img width = 320 src = "./Demo/ex2.png">
-
-you can use only integer in custom formatters.
 
 License
 -------
