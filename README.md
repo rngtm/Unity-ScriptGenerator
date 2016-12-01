@@ -27,9 +27,9 @@ Usage
 <br>
 That's it!
 
-<img src ="./Demo/demo.gif">
+<img width = 400 src ="./Demo/demo.gif">
 
-
+<br>
 Examples
 ---
 
@@ -42,10 +42,13 @@ Create **HogeView.cs**, **HogeModel.cs** and **HogePresenter.cs**.
 Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
 <br>
 <img width = 320 src = "./Demo/ex2.png">
+<br>
+<br>
 
 Script Generation Rule
 ---
 You can switch script generation rule in Advanced Settings. (since **v1.1**)
+<br>
 <img width = 370 src = "./Demo/rule.png">
 
 
