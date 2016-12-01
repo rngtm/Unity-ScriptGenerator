@@ -27,8 +27,9 @@ Usage
 <br>
 That's it!
 
-<img width = 400 src ="./Demo/demo.gif">
+<img src = "./Demo/demo.gif">
 
+<br>
 <br>
 Examples
 ---
