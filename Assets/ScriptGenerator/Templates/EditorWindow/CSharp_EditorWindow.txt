@@ -1,0 +1,19 @@
+﻿namespace #NAMESPACE#
+{
+    using UnityEngine;
+    using UnityEditor;
+    using System.Collections;
+
+    public class #SCRIPTNAME# : EditorWindow 
+    {
+        [MenuItem("EditorWindow/#SCRIPTNAME#")]
+        static void Open()
+        {
+            GetWindow<#SCRIPTNAME#>();
+        }
+
+        void OnGUI()
+        {
+        }
+    }
+}

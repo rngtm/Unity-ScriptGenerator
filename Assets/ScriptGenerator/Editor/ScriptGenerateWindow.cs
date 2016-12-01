@@ -26,6 +26,11 @@ namespace ScriptGenerator
         private const string DefaultSaveFolderPath = "Assets";
 
         /// <summary>
+        /// 初期状態でのルール
+        /// </summary>
+        private const string DefaultRuleName = "Default";
+
+        /// <summary>
         /// 作成スクリプトの言語
         /// </summary>
         private const Language ScriptLanguage = Language.CSharp;
@@ -38,12 +43,12 @@ namespace ScriptGenerator
         /// <summary>
         /// ベースとなるスクリプト名
         /// </summary>
-        [SerializeField] private string baseScriptName = "NewBehaviourScript";
+        [SerializeField] private string baseScriptName = "NewScript";
 
         /// <summary>
-          /// 書式指定項目のリスト
+        /// 書式指定項目のリスト
         /// </summary>
-        [SerializeField] private List<FormatItemList> formatItemLists = new List<FormatItemList>();
+        [SerializeField] private FormatItemList[] formatItems;
 
         /// <summary>
         /// スクリプト情報表示用のReorderableList
@@ -60,6 +65,21 @@ namespace ScriptGenerator
         /// </summary>
         [SerializeField] private string saveFolderPath = DefaultSaveFolderPath;
 
+        /// <summary>
+        /// 現在選択中のルール
+        /// </summary>
+        [SerializeField] private int currentRuleIndex = 0;
+
+        /// <summary>
+        /// AdvancedなUIを表示させるかどうか
+        /// </summary>
+        [SerializeField] private bool showAdvancedUI = false;
+
+        /// <summary>
+        /// スクリプトの生成ルール
+        /// </summary>
+        private RuleEntity[] rules;
+
         private static bool _needReset = false;
 
         /// <summary>
@@ -69,14 +89,29 @@ namespace ScriptGenerator
         // [MenuItem("Assets/Script Generator", false, 1)]
         static void Open()
         {
-            GetWindow<ScriptGenerateWindow>();
+            var window = GetWindow<ScriptGenerateWindow>();
+
+            window.ReloadRules();
+
+            var defaultRule = window.rules
+            .Select((rule, i) => new { rule = rule, index = i })
+            .FirstOrDefault(d => d.rule.name == DefaultRuleName);
+            if (defaultRule == null)
+            {
+                window.currentRuleIndex = 0;
+            }
+            else
+            {
+                window.currentRuleIndex = defaultRule.index;
+            }
         }
 
         /// <summary>
-        /// スクリプトがリロードされたときに呼ばれる 
+        /// ロード時に呼ばれる 
         /// </summary>
+        [InitializeOnLoadMethodAttribute]
         [DidReloadScripts]
-        static void OnLoadScript()
+        public static void OnLoad()
         {
             _needReset = true;
         }
@@ -84,34 +119,62 @@ namespace ScriptGenerator
         /// <summary>
         /// ウィンドウがアクティブになったときに呼ばれる
         /// </summary>
-        void OnEnable()
+        private void OnEnable()
         {
-            this.RebuildList();
-            this.Repaint();
+            // this.ExtractFormatItems();
+            if (this.formatItems != null)
+            {
+                this.RebuildList();
+                this.Repaint();
+            }
         }
 
         /// <summary>
         /// ウィンドウの描画処理
         /// </summary>
-        void OnGUI()
+        private void OnGUI()
         {
             if (Event.current.keyCode == KeyCode.Escape) { GUI.FocusControl(""); Repaint(); }
 
             if (_needReset)
             {
                 _needReset = false;
-                this.RebuildList();
+                this.ReloadRules();
+
+                if (this.lists != null)
+                {
+                    this.RebuildList();
+                }
             }
 
+            if (this.rules == null) { this.ReloadRules(); }
+
             this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
+
             this.CreateScriptButton();
+
             this.@namespace = EditorGUILayout.TextField("namespace", this.@namespace);
             EditorGUI.BeginChangeCheck();
+
             this.baseScriptName = EditorGUILayout.TextField("Base Script Name", this.baseScriptName);
             if (EditorGUI.EndChangeCheck())
             {
-                this.Reset();
+                this.ExtractFormatItems();
                 this.RebuildList();
+            }
+
+            if (this.showAdvancedUI = EditorGUILayout.Foldout(this.showAdvancedUI, "Advanced Settings"))
+            {
+                EditorGUI.indentLevel++;
+                var ruleNames = this.rules.Select(rule => rule.name).ToArray();
+                EditorGUILayout.BeginHorizontal();
+                this.currentRuleIndex = EditorGUILayout.Popup("スクリプト生成ルール", this.currentRuleIndex, ruleNames);
+                if (GUILayout.Button("Select", EditorStyles.miniButton, GUILayout.Width(44f)))
+                {
+                    EditorGUIUtility.PingObject(this.rules[this.currentRuleIndex]);
+                }
+                EditorGUILayout.EndHorizontal();
+                EditorGUI.indentLevel--;
             }
 
             // ReorderableListを表示
@@ -124,13 +187,12 @@ namespace ScriptGenerator
         }
 
         /// <summary>
-        /// リセット
+        /// 書式指定項目を抽出
         /// </summary>
-        void Reset()
+        private void ExtractFormatItems()
         {
-            this.formatItemLists.Clear();
-            MatchCollection matches = Regex.Matches(this.baseScriptName, @"(?<={)+[^\{\}]*(?=})"); // {}で囲まれた文字列を抽出
-
+            var list = new List<FormatItemList>();
+            var matches = Regex.Matches(this.baseScriptName, @"(?<={)+[^\{\}]*(?=})"); // {}で囲まれた文字列を抽出
             var keys = new List<int>();
             for (int i = 0; i < matches.Count; i++)
             {
@@ -139,16 +201,20 @@ namespace ScriptGenerator
                 if (!success) { Debug.LogError("invalid format"); continue; }
                 if (keys.Contains(key)) { continue; }
                 keys.Add(key);
-                this.formatItemLists.Add(new FormatItemList { Id = key, FormatItems = new List<FormatItem> { new FormatItem() } });
+                list.Add(new FormatItemList { Id = key, FormatItems = new List<FormatItem> { new FormatItem() } });
             }
+            this.formatItems = list.ToArray();
         }
 
         /// <summary>
         /// ReorderableListを作成しなおす
         /// </summary>
-        void RebuildList()
+        private void RebuildList()
         {
-            this.lists = this.formatItemLists.Select(d => CreateReorderableList(d)).ToArray();
+            this.lists = this.formatItems
+            .Where(d => d != null)
+            .Select(d => CreateReorderableList(d))
+            .ToArray();
         }
 
         /// <summary>
@@ -184,31 +250,37 @@ namespace ScriptGenerator
                 string relativePath = "Assets" + this.saveFolderPath.Substring(Application.dataPath.Length);
                 string extension = GetExntension(ScriptLanguage);
 
-                if (this.formatItemLists.Count == 0)
+                var rule = this.rules[this.currentRuleIndex];
+                if (this.formatItems == null || this.formatItems.Length == 0)
                 {
                     // スクリプト作成
                     var scriptPath = relativePath + Path.DirectorySeparatorChar + this.baseScriptName + extension;
                     var exists = AssetDatabase.LoadAllAssetsAtPath(scriptPath).Length != 0;
                     if (exists) { Debug.LogWarning("Exists: " + scriptPath); return; }
 
-                    var scriptAsset = CreateScriptAssetFromTemplate(scriptPath, TemplateUtility.TemplatePath(ScriptLanguage));
-                    Debug.Log("Create: " + scriptPath, scriptAsset);
+                    var templatePath = AssetDatabase.GetAssetPath(rule.DefaultTemplateAsset);
+                    var scriptAsset = CreateScriptAssetFromTemplate(scriptPath, templatePath);
+                    Debug.Log("Create: " + scriptPath + "\nRule: " + this.rules[this.currentRuleIndex].name, scriptAsset);
                 }
                 else
                 {
                     // スクリプト一括作成
-                    CreateDP(this.formatItemLists.Select(ds => ds.FormatItems.Select(d => d.Name)).ToArray())
+                    CreateDP(this.formatItems.Select(ds => ds.FormatItems.Select(d => d.Name)).ToArray())
                     .ToList()
                     .ForEach(strs =>
                     {
                         var scriptName = string.Format(baseScriptName, strs);
                         if (scriptName.Length == 0) { return; }
+
+                        var match = rule.ScriptGenerationRules.FirstOrDefault(r => Regex.Match(scriptName, r.Regex).Success);
+                        var template = (match != null) ? match.Template : rule.DefaultTemplateAsset;
+                        var templatePath = AssetDatabase.GetAssetPath(template);
                         var scriptPath = relativePath + Path.DirectorySeparatorChar + scriptName + extension;
                         var exists = AssetDatabase.LoadAllAssetsAtPath(scriptPath).Length != 0;
                         if (exists) { Debug.LogWarning("Exists: " + scriptPath); return; }
 
-                        var scriptAsset = CreateScriptAssetFromTemplate(scriptPath, TemplateUtility.TemplatePath(ScriptLanguage));
-                        Debug.Log("Create: " + scriptPath, scriptAsset);
+                        var scriptAsset = CreateScriptAssetFromTemplate(scriptPath, templatePath);
+                        Debug.Log("Create: " + scriptPath + "\nRule: " + this.rules[this.currentRuleIndex].name, scriptAsset);
                     });
                 }
                 AssetDatabase.Refresh();
@@ -224,7 +296,7 @@ namespace ScriptGenerator
             {
                 case Language.CSharp:
                     return ".cs";
-                case Language.JavaScript: 
+                case Language.JavaScript:
                     return ".js";
                 default:
                     throw new System.NotImplementedException();
@@ -269,6 +341,18 @@ namespace ScriptGenerator
             };
 
             return list;
+        }
+
+        /// <summary>
+        /// ルールのリロード
+        /// </summary>
+        private void ReloadRules()
+        {
+            this.rules = (RuleEntity[])AssetDatabase.FindAssets("t:RuleEntity")
+            .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+            .Select(path => AssetDatabase.LoadAssetAtPath(path, typeof(RuleEntity)))
+            .Select(obj => (RuleEntity)obj)
+            .ToArray();
         }
 
         /// <summary>

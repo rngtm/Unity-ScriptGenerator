@@ -5,16 +5,23 @@
 namespace ScriptGenerator
 {
     using System;
-    
+    using UnityEngine;
+
     /// <summary>
-    /// 書式指定項目
+    /// スクリプト生成ルール
     /// </summary>
     [SerializableAttribute]
-    public class FormatItem
+    public class ScriptGenerationRule
     {
         /// <summary>
-        /// クラス名
+        /// 正規表現
         /// </summary>
-        public string Name = "";
+        public string Regex;
+
+        /// <summary>
+        /// テンプレートファイル
+        /// </summary>
+        public TextAsset Template;
     }
+
 }

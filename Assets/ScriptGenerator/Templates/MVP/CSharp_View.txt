@@ -1,0 +1,12 @@
+﻿namespace #NAMESPACE#
+{
+    using System.Collections;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    // This is a view (MVP)
+    public class #SCRIPTNAME# : MonoBehaviour 
+    {
+
+    }
+}

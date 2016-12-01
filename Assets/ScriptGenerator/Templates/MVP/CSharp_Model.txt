@@ -1,0 +1,11 @@
+﻿namespace #NAMESPACE#
+{
+    using System.Collections;
+    using UnityEngine;
+
+    // This is a model (MVP)
+    public class #SCRIPTNAME#
+    {
+
+    }
+}
