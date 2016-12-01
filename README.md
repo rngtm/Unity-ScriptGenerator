@@ -43,6 +43,12 @@ Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
 <br>
 <img width = 320 src = "./Demo/ex2.png">
 
+Script Generation Rule
+---
+You can switch script generation rule in Advanced Settings. (since **v1.1**)
+<img width = 370 src = "./Demo/rule.png">
+
+
 License
 -------
 The MIT License (MIT)
