@@ -3,9 +3,8 @@
     using System.Collections;
     using UnityEngine;
 
-    // This is a presenter (MVP)
-    public class #SCRIPTNAME# : MonoBehaviour 
+    // This is a Model (MVP)
+    public class #SCRIPTNAME#
     {
-
     }
 }

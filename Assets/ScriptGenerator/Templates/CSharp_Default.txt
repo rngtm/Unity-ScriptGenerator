@@ -4,7 +4,6 @@
     using System.Collections;
 
     public class #SCRIPTNAME# : MonoBehaviour {
-
         // Use this for initialization
         void Start () {
         

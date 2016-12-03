@@ -4,9 +4,8 @@
     using UnityEngine;
     using UnityEngine.UI;
 
-    // This is a view (MVP)
+    // This is a View (MVP)
     public class #SCRIPTNAME# : MonoBehaviour 
     {
-
     }
 }
