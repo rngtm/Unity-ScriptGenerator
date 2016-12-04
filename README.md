@@ -48,12 +48,12 @@ Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
 
 Script Template File
 ---
-The script files are generated from script template file.
+The script files are generated from script template text file.
 <br>
 <img width = 120 src = "./Demo/template.png">
 <br>
 <br>
-You can change generated code by editing this file.
+You can change generated code by editing this one.
 
 
 Script Generation Rule
