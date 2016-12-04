@@ -63,6 +63,7 @@ You can switch script generation rule in Advanced Settings. (since **v1.1**)
 <img width = 370 src = "./Demo/rule.png">
 
 You can switch script template file in the rule ScriptableObject.
+<br>
 <img width = 370 src = "./Demo/rule_intro.png">
 
 Script Parameter
@@ -81,7 +82,6 @@ step 2: Type parameter within ```#{``` and ```}#``` &ensp;   (e.g.```#{Param1}#`
 step 3: Select rule Asset in Project Browser.
 <br>
 <img width = 200 src = "./Demo/select_rule.png">
-<br>
 <br>
 
 step 4: Type text you want in the inspector panel
