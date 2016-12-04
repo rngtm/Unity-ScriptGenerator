@@ -93,8 +93,8 @@ step 4: Type text you want in the inspector panel
 step 5: These parameters will be replaced during generating scripts.
 <br>
 For example, generating **HogeFugaPresenter.cs** with this rule, <br>
-```#{Param1}#```  will be replaced by  ```HogeFuga``` ,<br>
-```#{Param2}#```  will be replaced by  ```hogeFuga``` . <br>
+```#{Param1}#```  will be replaced by  ```HogeFuga```, <br>
+```#{Param2}#```  will be replaced by  ```hogeFuga```. <br>
 
 <br>
 That's all.
