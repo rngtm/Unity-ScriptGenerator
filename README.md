@@ -2,7 +2,7 @@ Unity-ScriptGenerator
 ============
 **ScriptGenerator** is a tool to create script files automatically in Unity.
 
-Usage
+How to use
 -------
 1) Select "Tools/Script Generator" in the menu.
 <br>
@@ -46,12 +46,58 @@ Create **HogeView.cs**, **PuyoView.cs**, **HogeModel.cs** and **PuyoModel.cs**.
 <br>
 <br>
 
+Script Template File
+---
+The script files are generated from script template file.
+<br>
+<img width = 120 src = "./Demo/template.png">
+<br>
+<br>
+You can change generated code by editing this file.
+
+
 Script Generation Rule
 ---
 You can switch script generation rule in Advanced Settings. (since **v1.1**)
 <br>
 <img width = 370 src = "./Demo/rule.png">
 
+You can switch script template file in the rule ScriptableObject.
+<img width = 370 src = "./Demo/rule_intro.png">
+
+Script Parameter
+---
+You can pass parameters for generating scripts. (since **v2.0**)
+
+step 1: Open the template file (.txt)
+<br>
+<img width = 200 src = "./Demo/select_text.png">
+<br>
+<br>
+
+step 2: Type parameter within ```#{``` and ```}#``` &ensp;   (e.g.```#{Param1}#```)
+
+<br>
+step 3: Select rule Asset in Project Browser.
+<br>
+<img width = 200 src = "./Demo/select_rule.png">
+<br>
+<br>
+
+step 4: Type text you want in the inspector panel
+<br>
+<img width = 400 src = "./Demo/parameter.png">
+<br>
+<br>
+
+step 5: These parameters will be replaced during generating scripts.
+<br>
+For example, generating **HogeFugaPresenter.cs** with this rule, <br>
+```#{Param1}#```  will be replaced by  ```HogeFuga``` ,<br>
+```#{Param2}#```  will be replaced by  ```hogeFuga``` . <br>
+
+<br>
+That's all.
 
 License
 -------
