@@ -8,7 +8,7 @@ namespace ScriptGenerator
 
     public class CustomUI
     {
-        private const string VersionLabelText = "ScriptGenerator v2.0";
+        private const string VersionLabelText = "ScriptGenerator v2.1";
 
         private static GUIStyle _versionLabelStyle;
 

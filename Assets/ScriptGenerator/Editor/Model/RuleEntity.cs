@@ -15,12 +15,28 @@ namespace ScriptGenerator
     // [CreateAssetMenu(fileName = "NewRule", menuName = "ScriptGenerator/Rule")]
     public class RuleEntity : ScriptableObject
     {
+        [HeaderAttribute("カテゴリー")]
+        [SerializeField] private string category;
+
+        [HeaderAttribute("デフォルトでのスクリプト名Suffix")]
+        [SerializeField] private string defaultScriptNameSuffix;
+
         [HeaderAttribute("通常のスクリプトテンプレート")]
         [SerializeField] private TextAsset defaultTemplate;
 
         [HeaderAttribute("正規表現(Regex)にマッチする場合のスクリプトテンプレート")]
         [SerializeField] private List<ScriptGenerationRule> scriptGenerationRules = new List<ScriptGenerationRule>();
         [SerializeField, HideInInspector] private ParameterData[] parameterDatas = new ParameterData[0];
+        
+        /// <summary>
+        /// ルールのカテゴリ
+        /// </summary>
+        public string Category { get { return this.category; } }
+
+        /// <summary>
+        /// デフォルトでのスクリプト名Suffix
+        /// </summary>
+        public string DefaultScriptNameSuffix { get { return this.defaultScriptNameSuffix; } }
 
         /// <summary>
         /// パラメーター
@@ -51,7 +67,7 @@ namespace ScriptGenerator
             var newParameterDatas = templates
             .SelectMany(template => ExtractParameterNames(template.text).Select(name => new {Name = name, Template = template}))
             .Distinct()
-            .Select(data => this.parameterDatas.FirstOrDefault(d => d.ParameterName == data.Name) ?? new ParameterData { ParameterName = data.Name, TemplateName = data.Template.name})
+            .Select(data => this.parameterDatas.FirstOrDefault(d => d.ParameterName == data.Name) ?? new ParameterData (parameterName : data.Name, templateName : data.Template.name))
             .ToArray();
             
             this.parameterDatas = newParameterDatas;

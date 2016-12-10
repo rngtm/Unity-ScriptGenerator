@@ -4,14 +4,15 @@
 ///-----------------------------------
 namespace ScriptGenerator
 {
-    public class ModelLoader
+    using System;
+    using UnityEditorInternal;
+
+    [SerializableAttribute]
+    public class RuleView
     {
         /// <summary>
-        /// モデルの取得
+        /// ルール選択GUIの表示用ReorderableList
         /// </summary>
-        public static ModelEntity LoadModel()
-        {
-            return ScriptGenerateWindow.Instance.ModelEntity;
-        }
+        public ReorderableList ruleSelectionList = null;
     }
 }

@@ -11,6 +11,7 @@ namespace ScriptGenerator
     using UnityEditor.Callbacks;
     using UnityEditorInternal;
 
+    [CanEditMultipleObjects]
     [CustomEditor(typeof(RuleEntity))]
     public class RuleEntityInspector : Editor
     {
@@ -41,6 +42,29 @@ namespace ScriptGenerator
         private static bool _needReset = false;
 
         /// <summary>
+        /// インスペクターの表示
+        /// </summary>
+        public override void OnInspectorGUI()
+        {
+            if (_needReset)
+            {
+                _needReset = false;
+                this.Initialize();
+            }
+
+            DrawDefaultInspector();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
+            if (this.parameterLists == null) { return; }
+
+            this.parameterLists.ToList().ForEach(list =>
+            {
+                list.DoLayoutList();
+            });
+        }
+
+        /// <summary>
         /// 開始時に呼ばれる
         /// </summary>
         void OnEnable()
@@ -68,7 +92,7 @@ namespace ScriptGenerator
 
 
         /// <summary>
-        /// ReorderableListを標示
+        /// ReorderableListを表示
         /// </summary>
         ReorderableList CreateParameterList(string templateName, ParameterData[] parameterDatas)
         {
@@ -199,29 +223,6 @@ namespace ScriptGenerator
                     break;
             }
             return text;
-        }
-
-        /// <summary>
-        /// インスペクターの表示
-        /// </summary>
-        public override void OnInspectorGUI()
-        {
-            if (_needReset)
-            {
-                _needReset = false;
-                this.Initialize();
-            }
-
-            DrawDefaultInspector();
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-
-            if (this.parameterLists == null) { return; }
-
-            this.parameterLists.ToList().ForEach(list =>
-            {
-                list.DoLayoutList();
-            });
         }
     }
 }

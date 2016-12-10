@@ -52,7 +52,6 @@ namespace ScriptGenerator
         private static ScriptGenerateWindow _instance;
         public static ScriptGenerateWindow Instance { get { return _instance ?? (_instance = EditorWindow.GetWindow<ScriptGenerateWindow>()); } }
 
-
         /// <summary>
         /// ロード時に呼ばれる 
         /// </summary>
@@ -67,7 +66,6 @@ namespace ScriptGenerator
         /// ウィンドウを開く
         /// </summary>
         [MenuItem("Tools/Script Generator")]
-        // [MenuItem("Assets/Script Generator", false, 1)]
         static void Open()
         {
             var window = GetWindow<ScriptGenerateWindow>();
@@ -80,15 +78,36 @@ namespace ScriptGenerator
         /// </summary>
         private void OnGUI()
         {
-            if (Event.current.keyCode == KeyCode.Escape) { GUI.FocusControl(""); Repaint(); }
+            if (Event.current.rawType == EventType.KeyDown) 
+            {
+                switch (Event.current.keyCode)
+                {
+                    case KeyCode.Escape:
+                        GUI.FocusControl(""); 
+                        Repaint(); 
+                        break;
+                    case KeyCode.RightArrow:
+                        this.RuleViewModel.NextRule();
+                        this.Repaint();
+                        break;
+                    case KeyCode.LeftArrow:
+                        this.RuleViewModel.PreviousRule();
+                        this.Repaint();
+                        break;
+                        
+                } 
+            }
 
-            if (_needReload)
+            if (_needReload )
             {
                 _needReload = false;
                 this.RuleViewModel.OnReload();
                 this.ScriptViewModel.OnReload();
+                this.Repaint();
             }
 
+            CustomUI.VersionLabel();
+            
             this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
 
             if (GUILayout.Button("スクリプト生成"))
@@ -96,18 +115,8 @@ namespace ScriptGenerator
                 this.DoCreateScriptButton();
             }
 
-            // this.ScriptViewModel.DoLayoutBasicUI();
+            this.ScriptViewModel.DoLayoutBasicUI();
             
-            this.ModelEntity.ScriptModel.@namespace = EditorGUILayout.TextField("namespace", this.ModelEntity.ScriptModel.@namespace);
-            EditorGUI.BeginChangeCheck();
-
-            this.ModelEntity.ScriptModel.baseScriptName = EditorGUILayout.TextField("Base Script Name", this.ModelEntity.ScriptModel.baseScriptName);
-            if (EditorGUI.EndChangeCheck())
-            {
-                this.ScriptViewModel.ExtractScriptFormatItems();
-            }
-            
-
             if (this.showAdvancedUI = EditorGUILayout.Foldout(this.showAdvancedUI, "Advanced Settings"))
             {
                 AdvancedSettingsGUI();
@@ -116,8 +125,6 @@ namespace ScriptGenerator
             this.ScriptViewModel.DoLayoutFormatterList();
 
             EditorGUILayout.EndScrollView();
-
-            CustomUI.VersionLabel();
         }
 
         /// <summary>
@@ -125,9 +132,7 @@ namespace ScriptGenerator
         /// </summary>
         private void AdvancedSettingsGUI()
         {
-            EditorGUI.indentLevel++;
             this.RuleViewModel.ShowRuleGUI();
-            EditorGUI.indentLevel--;
         }
 
         /// <summary>
@@ -140,12 +145,36 @@ namespace ScriptGenerator
             if (saveFolderPath.Length == 0) { return; }
             this.saveFolderPath = saveFolderPath;
 
+            // スクリプト一括作成
+            this.CreateScripts();
+        }
+
+        /// <summary>
+        /// 選択しているルールからスクリプトを作成
+        /// </summary>
+        private void CreateScripts()
+        {
+            for (int i = 0; i < this.ModelEntity.RuleModel.GetSelectionCount(); i++)
+            {
+                this.CreateScript(i);
+            }
+        }
+
+        /// <summary>
+        /// 選択しているルールからスクリプトを作成する
+        /// </summary>
+        private void CreateScript(int selectionIndex)
+        {            
             string relativePath = "Assets" + this.saveFolderPath.Substring(Application.dataPath.Length);
             string extension = GetExntension(ScriptLanguage);
-            var currentRule = this.RuleViewModel.GetCurrentRule();
+
+            var currentRule = this.RuleViewModel.GetSelectedRule(selectionIndex);
+            var scriptNameSuffix = this.RuleViewModel.GetScriptNameSuffix(selectionIndex);
 
             //　スクリプト 一括作成
             this.ScriptViewModel.ScriptNames()
+            .Select(scriptName => scriptName + scriptNameSuffix)
+            .Where(scriptName => !string.IsNullOrEmpty(scriptName))
             .ToList()
             .ForEach(scriptName =>
             {
@@ -159,9 +188,8 @@ namespace ScriptGenerator
                      return; 
                 }
                 var scriptAsset = CreateScriptAssetFromTemplate(scriptName, scriptPath, templatePath, currentRule.GetParameterDatas(template.name));
-                Debug.Log("Create: " + scriptPath + "\nRule: " + currentRule.name, scriptAsset);
+                Debug.Log("Create: " + scriptPath + "\nRule: " + currentRule.name + "\nTemplate:" + template.name + "\n", scriptAsset);
             });
-            AssetDatabase.Refresh();
         }
 
         /// <summary>
@@ -217,7 +245,7 @@ namespace ScriptGenerator
                         break;
                 }
 
-                text = Regex.Replace(text, "#{" + data.ParameterName + "}#", replacement);
+                text = text.Replace("#{" + data.ParameterName + "}#", replacement);
             });
 
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(scriptPath);
@@ -235,6 +263,7 @@ namespace ScriptGenerator
                 text2 = "my" + char.ToUpper(text2[0]) + text2.Substring(1);
                 text = Regex.Replace(text, "#SCRIPTNAME_LOWER#", text2);
             }
+
             bool encoderShouldEmitUTF8Identifier = true;
             bool throwOnInvalidBytes = false;
             UTF8Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);

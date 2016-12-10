@@ -6,9 +6,10 @@
     // This is a Presenter (MVP)
     public class #SCRIPTNAME# : MonoBehaviour 
     {
-        // private #{Param1}#Model  #{Param2}#Model = new #{Param1}#Model();
-        // [SerializeField] private #{Param1}#View  #{Param2}#View;
-        // public #{Param1}#Model  #{Param1}#Model { get { return this.#{Param2}#Model; } }
-        // public #{Param1}#View  #{Param1}#View { get { return this.#{Param2}#View; } }
+        //private #{Param1}#Model  #{Param2}#Model = new #{Param1}#Model();
+        //[SerializeField] private #{Param1}#View  #{Param2}#View;
+        
+        //public #{Param1}#Model  #{Param1}#Model { get { return this.#{Param2}#Model; } }
+        //public #{Param1}#View  #{Param1}#View { get { return this.#{Param2}#View; } }
     }
 }

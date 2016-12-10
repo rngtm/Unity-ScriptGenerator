@@ -5,6 +5,7 @@
 namespace ScriptGenerator
 {
     using System;
+    using UnityEngine;
 
     /// <summary>
     /// パラメーター情報
@@ -13,23 +14,40 @@ namespace ScriptGenerator
     public class ParameterData
     {
         /// <summary>
-        /// スクリプトテンプレート名
+        /// コンストラクタ
         /// </summary>
-        public string TemplateName = string.Empty;
+        public ParameterData(string templateName, string parameterName)
+        {
+            this.templateName = templateName;
+            this.parameterName = parameterName;
+        }
+
+        public const string ParameterPrefix = "___";
+
+        [SerializeField] private string templateName = string.Empty;
+        [SerializeField] private string parameterName = string.Empty;
+        [SerializeField] private string text = ".*";
+        [SerializeField] private ParameterSourceType parameterSourceType = ParameterSourceType.RegexMatchScriptNameUpper;
 
         /// <summary>
-        /// パラメーター名
+        /// スクリプトテンプレート名
         /// </summary>
-        public string ParameterName = string.Empty;
+        public string TemplateName { get { return this.templateName; } set { this.templateName = value; } }
+
+        /// <summary>
+        /// スクリプトテンプレート名
+        /// </summary>
+        public string ParameterName { get { return this.parameterName; } set { this.parameterName = value; } }
 
         /// <summary>
         /// テキスト
         /// </summary>
-        public string Text = ".*";
+        public string Text { get { return this.text; } set { this.text = value; } }
 
         /// <summary>
         /// パラメーターのタイプ
         /// </summary>
-        public ParameterSourceType ParameterSourceType = ParameterSourceType.RegexMatchScriptNameUpper;
+        public ParameterSourceType ParameterSourceType { get { return this.parameterSourceType; } set { this.parameterSourceType = value;} }
+
     }
 }

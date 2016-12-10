@@ -23,12 +23,15 @@ namespace ScriptGenerator
         /// </summary>
         public static RuleEntity[] LoadRules()
         {
-             return (RuleEntity[])AssetDatabase.FindAssets("t:RuleEntity")
+             var rules = (RuleEntity[])AssetDatabase.FindAssets("t:ScriptableObject")
             .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
             .Select(path => AssetDatabase.LoadAssetAtPath(path, typeof(RuleEntity)))
+            .Where(obj => obj != null)
             .Select(obj => (RuleEntity)obj)
             .Where(rule => rule.DefaultTemplateAsset != null)
             .ToArray();
+
+            return rules;
         }
     }
 }

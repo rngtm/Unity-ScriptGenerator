@@ -17,8 +17,7 @@ namespace ScriptGenerator
     public class ScriptViewModel : ViewModelBase
     {
         private ScriptModel model { get { return base.ModelEntity.ScriptModel; } }
-
-        private ScriptView view = new ScriptView();
+        [SerializeField] private ScriptView view = new ScriptView();
 
         /// <summary>
         /// ウィンドウ生成時に呼ばれる
@@ -116,11 +115,25 @@ namespace ScriptGenerator
         private static ReorderableList CreateScriptList(FormatItemList formatList)
         {
             var list = new ReorderableList((IList)formatList.FormatItems, typeof(string));
+            
+            list.onCanRemoveCallback = (l) =>
+            {
+                return l.count > 1;
+            };
 
             // ヘッダー描画
+            var headerRect = default(Rect);
             list.drawHeaderCallback += (rect) =>
             {
+                headerRect = rect;
                 EditorGUI.LabelField(rect, "{" + formatList.Id + "}");
+            };
+            
+            // フッター描画
+            list.drawFooterCallback = (rect) =>
+            {
+                rect.y = headerRect.y + 3f;
+                ReorderableList.defaultBehaviours.DrawFooter(rect, list);
             };
 
             // 要素の描画
@@ -133,19 +146,6 @@ namespace ScriptGenerator
                 scriptData.Name = EditorGUI.TextField(rect, scriptData.Name);
             };
 
-            // フッター描画
-            list.drawFooterCallback = (rect) =>
-            {
-                if (list.count == 0)
-                {
-                    rect.position -= new Vector2(0f, list.elementHeight + list.headerHeight + 3f);
-                }
-                else
-                {
-                    rect.position -= new Vector2(0f, list.elementHeight * list.count + list.headerHeight + 3f);
-                }
-                ReorderableList.defaultBehaviours.DrawFooter(rect, list);
-            };
 
             return list;
         }
@@ -180,9 +180,9 @@ namespace ScriptGenerator
                 .Any(x => x.item.Id != this.model.formatItems[x.index].Id);
             }
 
-            this.model.formatItems = list.ToArray();
             if (isChanged)
             {
+                this.model.formatItems = list.ToArray();
                 this.OnFormatterIdChanged();
             }
         }
