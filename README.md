@@ -68,7 +68,7 @@ You can switch script template file in the rule ScriptableObject.
 
 Script Parameter
 ---
-You can pass parameters for generating scripts. (since **v2.0**)
+You can pass parameters for generating script files. (since **v2.0**)
 
 step 1: Open the template file (.txt)
 <br>
@@ -90,14 +90,26 @@ step 4: Type text you want in the inspector panel
 <br>
 <br>
 
-step 5: These parameters will be replaced during generating scripts.
+step 5: These parameters will be replaced during generating script files.
 <br>
 For example, generating **HogeFugaPresenter.cs** with this rule, <br>
 ```#{Param1}#```  will be replaced by  ```HogeFuga```, <br>
 ```#{Param2}#```  will be replaced by  ```hogeFuga```. <br>
 
+You cannot use a number within ```#{``` and ```}#```.<br>
+For example, ```#{0}#``` is not supported.
+
 <br>
 That's all.
+
+Multiple Rules
+---
+
+You can use multiple script generation rules in Advanced Settings. (since **v2.1**).
+<br>
+<img width = 420 src = "./Demo/multiple_rules.png">
+
+You can create various script files at once.<br>
 
 License
 -------
