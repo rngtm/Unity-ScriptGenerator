@@ -145,6 +145,8 @@ namespace ScriptGenerator
             if (saveFolderPath.Length == 0) { return; }
             this.saveFolderPath = saveFolderPath;
 
+            AssetDatabase.Refresh();
+
             // スクリプト一括作成
             this.CreateScripts();
         }
