@@ -4,7 +4,7 @@
     using UnityEditor;
     using System.Collections;
 
-    [CustomEditor(typeof(#{0}#))]
+    [CustomEditor(typeof(#{Param0}#))]
     public class #SCRIPTNAME# : Editor
     {
         public override void OnInspectorGUI()
