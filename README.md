@@ -96,7 +96,9 @@ For example, generating **HogeFugaPresenter.cs** with this rule, <br>
 ```#{Param1}#```  will be replaced by  ```HogeFuga```, <br>
 ```#{Param2}#```  will be replaced by  ```hogeFuga```. <br>
 
-You cannot use a number within ```#{``` and ```}#```.<br>
+<img width = 480 src = "./Demo/pic1.png">
+
+You **cannot** use a number within ```#{``` and ```}#```.<br>
 For example, ```#{0}#``` is not supported.
 
 <br>
@@ -109,6 +111,7 @@ You can use multiple script generation rules in Advanced Settings. (since **v2.1
 <br>
 <img width = 420 src = "./Demo/multiple_rules.png">
 
+<br>
 You can create various script files at once.<br>
 
 License
